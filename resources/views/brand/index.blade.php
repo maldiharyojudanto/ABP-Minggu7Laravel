@@ -86,6 +86,33 @@
                 <h3 class="fs-4 mb-3">List Brand</h3>
                 <p>Berikut adalah list brand.</p>
                 <a href="/brand/create" class="btn btn-primary mb-4"><i class="fas fa-plus"></i> Add Brand</a>
+                
+                <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#addModal"><i class="fas fa-plus"></i> Add Brand (Modal)</button>
+
+                <!-- Add Modal -->
+                <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addModalLabel">Masukkan Detail Brand</h5>
+                            </div>
+                            <form action="/brand" method="POST">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label>Nama Brand</label>
+                                        <input type="text" name="nama_brand" class="form-control" placeholder="Masukkan nama" required/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" onclick="return alert('{{ __('Berhasil!') }}')" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Selesai Add Modal -->
 
                 <div class="col">
                     <div class="table-responsive">
@@ -108,7 +135,38 @@
                                         <td>{{ $item->produk->count() ?? '' }}</td>
                                         <td>{{ $item->produk->unique('gudang_id')->count() ?? '' }}</td>
                                         <td>
-                                            <a href="/brand/edit/{{$item->id}}" class="btn btn-primary btn-sm" >Edit</a> | <a href="/brand/delete/{{$item->id}}" onclick="return confirm('{{ __('Apakah yakin menghapus?') }}')" class="btn btn-danger btn-sm" >Delete</a>
+                                            <a href="/brand/edit/{{$item->id}}" class="btn btn-primary btn-sm" >Edit</a> 
+                                            
+                                            | <a href="" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal-{{ $item->id }}">Edit (Modal)</a>
+
+                                            <!-- Edit Modal -->
+                                            @foreach ($list as $daftar)
+                                                <div class="modal fade" id="editModal-{{ $daftar->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="editModalLabel">Edit Detail {{ $daftar->nama_brand }}</h5>
+                                                            </div>
+                                                            <form action="/brand/update/{{$daftar->id}}" method="POST">
+                                                                @csrf
+                                                                <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    <label>Nama Brand</label>
+                                                                    <input type="text" name="nama_brand" value="{{$daftar->nama_brand}}" class="form-control" placeholder="Masukkan nama" required/>
+                                                                </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                    <button type="submit" onclick="return alert('{{ __('Berhasil!') }}')" class="btn btn-primary">Submit</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                            <!-- Selesai Edit Modal -->
+                                            
+                                            | <a href="/brand/delete/{{$item->id}}" onclick="return confirm('{{ __('Apakah yakin menghapus?') }}')" class="btn btn-danger btn-sm" >Delete</a>
                                         </td>
                                     </tr>
                                     <?php $number++; ?>

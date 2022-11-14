@@ -88,6 +88,61 @@
                 <p>Berikut adalah list produk.</p>
                 <a href="/produk/create" class="btn btn-primary mb-4"><i class="fas fa-plus"></i> Add Produk</a>
 
+                <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#addModal"><i class="fas fa-plus"></i> Add Produk (Modal)</button>
+
+                <!-- Add Modal -->
+                <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addModalLabel">Masukkan Detail Produk</h5>
+                            </div>
+                            <form action="/produk" method="POST">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label>Nama Produk</label>
+                                        <input type="text" name="nama_produk" class="form-control" placeholder="Masukkan nama" required/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Stok</label>
+                                        <input type="number" name="stok" class="form-control" placeholder="Masukkan stok" required/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Brand</label>
+                                        <select name="brand_id" id="brand_id" class="form-control">
+                                            @foreach ($brand as $item)
+                                            <option value="{{$item->id}}">{{$item->nama_brand}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Gudang</label>
+                                        <select name="gudang_id" id="gudang_id" class="form-control">
+                                            @foreach ($gudang as $item)
+                                            <option value="{{$item->id}}">{{$item->nama_gudang}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Harga</label>
+                                        <input type="number" name="harga" class="form-control" placeholder="Masukkan harga" required/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" onclick="return alert('{{ __('Berhasil!') }}')" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Selesai Add Modal -->
+
                 <div class="col">
                     <div class="table-responsive">
                         <table class="table bg-white rounded table-hover">
@@ -113,7 +168,70 @@
                                         <td>{{ $item->gudang->nama_gudang ?? 'unknown'}}</td>
                                         <td>{{ $item->harga }}</th>
                                         <td>
-                                            <a href="/produk/edit/{{$item->id}}" class="btn btn-primary btn-sm">Edit</a> | <a href="/produk/delete/{{$item->id}}" class="btn btn-danger btn-sm">Delete</a>
+                                            <a href="/produk/edit/{{$item->id}}" class="btn btn-primary btn-sm">Edit</a> 
+                                            
+                                            | <a href="" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal-{{ $item->id }}">Edit (Modal)</a>
+
+                                            <!-- Edit Modal -->
+                                            @foreach ($list as $daftar)
+                                                <div class="modal fade" id="editModal-{{ $daftar->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="editModalLabel">Edit Detail {{ $daftar->nama_produk }}</h5>
+                                                            </div>
+                                                            <form action="/produk/update/{{$daftar->id}}" method="POST">
+                                                                @csrf
+                                                                <div class="modal-body">
+                                                                    <div class="form-group">
+                                                                        <label>Nama Produk</label>
+                                                                        <input type="text" name="nama_produk" value="{{$daftar->nama_produk}}" class="form-control" placeholder="Masukkan nama" required/>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label>Stok</label>
+                                                                        <input type="number" name="stok" value="{{$daftar->stok}}" class="form-control" placeholder="Masukkan stok" required/>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label>Brand</label>
+                                                                        <select name="brand_id" id="brand_id" class="form-control">
+                                                                            @foreach ($brand as $item)
+                                                                            <option value="{{$item->id}}" {{($daftar->brand_id == $item->id) ? 'Selected' : ''}}
+                                                                                >{{$item->nama_brand}}
+                                                                            </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label>Gudang</label>
+                                                                        <select name="gudang_id" id="gudang_id" class="form-control">
+                                                                            @foreach ($gudang as $item)
+                                                                            <option value="{{$item->id}}" {{($daftar->gudang_id == $item->id) ? 'Selected' : ''}}
+                                                                                >{{$item->nama_gudang}}
+                                                                            </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label>Harga</label>
+                                                                        <input type="number" name="harga" value="{{$daftar->harga}}" class="form-control" placeholder="Masukkan harga" required/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                    <button type="submit" onclick="return alert('{{ __('Berhasil!') }}')" class="btn btn-primary">Submit</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                            <!-- Selesai Edit Modal -->
+
+                                            | <a href="/produk/delete/{{$daftar->id}}" onclick="return confirm('{{ __('Apakah yakin menghapus?') }}')" class="btn btn-danger btn-sm">Delete</a>
                                         </td>
                                     </tr>
                                     <?php $number++; ?>

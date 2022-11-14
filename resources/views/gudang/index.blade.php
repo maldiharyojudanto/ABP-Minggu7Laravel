@@ -85,29 +85,168 @@
                 <p>Berikut adalah list gudang.</p>
                 <a href="/gudang/create" class="btn btn-primary mb-4"><i class="fas fa-plus"></i> Add Gudang</a>
 
+                <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#addModal"><i class="fas fa-plus"></i> Add Gudang (Modal)</button>
+
+                <!-- Add Modal -->
+                <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addModalLabel">Masukkan Detail Gudang</h5>
+                            </div>
+                            <form action="/gudang" method="POST">
+                                @csrf
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label>Nama Gudang</label>
+                                        <input type="text" name="nama_gudang" class="form-control" placeholder="Masukkan nama" required/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Alamat Gudang</label>
+                                        <input type="text" name="alamat_gudang" class="form-control" placeholder="Masukkan nama" required/>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" onclick="return alert('{{ __('Berhasil!') }}')" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- Selesai Add Modal -->
+
                 <div class="col">
                     <div class="table-responsive">
                         <table class="table bg-white rounded table-hover">
                             <thead>
                                 <tr>
-                                    <th>No.</th>
                                     <th>Nama Gudang</th>
                                     <th>Alamat Gudang</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $number = 1; ?>
                                 @foreach ($list as $item)
                                     <tr>
-                                        <th scope="row">{{ $number }}.</th>
                                         <td>{{ $item->nama_gudang }}</td>
                                         <td>{{ $item->alamat_gudang }}</td>
                                         <td>
-                                            <a href="/gudang/detail/{{$item->id}}" class="btn btn-dark btn-sm" >Detail</a> | <a href="/gudang/edit/{{$item->id}}" class="btn btn-primary btn-sm" >Edit</a> | <a href="/gudang/delete/{{$item->id}}" onclick="return confirm('{{ __('Apakah yakin menghapus?') }}')" class="btn btn-danger btn-sm" >Delete</a>
+                                            <a href="/gudang/detail/{{$item->id}}" class="btn btn-dark btn-sm" >Detail</a> 
+                                            
+                                            | <a href="" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#detailModal-{{ $item->id }}">Detail (Modal)</a>
+
+                                            <!-- Detail Modal -->
+                                            @foreach ($list as $detail)
+                                                <div class="modal fade" id="detailModal-{{ $detail->id }}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="detailModalLabel">Detail Gudang {{ $detail->nama_gudang }}</h5>
+                                                            </div>
+                                                            <form action="" method="POST">
+                                                                @csrf
+                                                                <div class="modal-body">
+                                                                    <p>Berikut adalah detail gudang {{$detail->nama_gudang}}.</p>
+                                                                    <div class="col">
+                                                                        <div class="table-responsive">
+                                                                            <table class="table bg-white rounded table-hover">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th>Nama Gudang</th>
+                                                                                        <th>Alamat Gudang</th>
+                                                                                        <th>Total Stok</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td>{{ $detail->nama_gudang }}</td>
+                                                                                        <td>{{ $detail->alamat_gudang }}</td>
+                                                                                        <td>{{ $detail->produk->pluck('stok')->sum() }}</td>
+
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+
+                                                                            <table class="table bg-white rounded table-hover">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th>No.</th>
+                                                                                        <th>Nama Produk</th>
+                                                                                        <th>Stok</th>
+                                                                                        <th>Harga</th>
+                                                                                        <th>Brand</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                <?php $number = 1; ?>
+                                                                                    @foreach($detail->produk as $ditel)
+                                                                                        <tr>
+                                                                                            <th scope="row">{{ $number }}.</th>
+                                                                                            <td>{{ $ditel->nama_produk }}</td>
+                                                                                            <td>{{ $ditel->stok }}</td>
+                                                                                            <td>{{ $ditel->harga }}</td>
+                                                                                            <td>
+                                                                                                {{ $ditel->brand->nama_brand }}
+                                                                                            </td>                                                                                       </td>
+                                                                                        </tr>
+                                                                                        <?php $number++; ?>
+                                                                                    @endforeach
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                            <!-- Selesai Detail Modal -->
+                                            
+                                            | <a href="/gudang/edit/{{$item->id}}" class="btn btn-primary btn-sm" >Edit</a>
+
+                                            | <a href="" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal-{{ $item->id }}">Edit (Modal)</a>
+
+                                            <!-- Edit Modal -->
+                                            @foreach ($list as $daftar)
+                                                <div class="modal fade" id="editModal-{{ $daftar->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="editModalLabel">Edit Detail {{ $daftar->nama_gudang }}</h5>
+                                                            </div>
+                                                            <form action="/gudang/update/{{$daftar->id}}" method="POST">
+                                                                @csrf
+                                                                <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    <label>Nama Gudang</label>
+                                                                    <input type="text" name="nama_gudang" value="{{$daftar->nama_gudang}}" class="form-control" placeholder="Masukkan nama" required/>
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label>Alamat Gudang</label>
+                                                                    <input type="text" name="alamat_gudang" value="{{$daftar->alamat_gudang}}" class="form-control" placeholder="Masukkan nama" required/>
+                                                                </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                    <button type="submit" onclick="return alert('{{ __('Berhasil!') }}')" class="btn btn-primary">Submit</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <!-- Selesai Edit Modal -->
+                                            @endforeach
+                                            
+                                            | <a href="/gudang/delete/{{$daftar->id}}" onclick="return confirm('{{ __('Apakah yakin menghapus?') }}')" class="btn btn-danger btn-sm" >Delete</a>
                                         </td>
                                     </tr>
-                                    <?php $number++; ?>
                                 @endforeach
                             </tbody>
                         </table>

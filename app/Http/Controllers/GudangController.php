@@ -10,8 +10,11 @@ use App\Models\Brand;
 class GudangController extends Controller
 {
     public function index() {
-        $list = Gudang::with('produk')->get();
-        return view("gudang.index",compact('list'));
+        $produk = Produk::all();
+        $brand = Brand::all();
+
+        $list = Gudang::with('produk.brand')->get();
+        return view("gudang.index",compact('list','produk','brand'));
     }
 
     public function create() {
